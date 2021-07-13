@@ -20,3 +20,9 @@ request.onupgradeneeded = function (e) {
 request.onerror = function (e) {
     console.log(e.target.errorCode);
 };
+
+function checkDatabase() {
+    console.log('Check DB invoked');
+
+    let transaction = db.transaction(['BudgetStore'], 'readwrite');
+}
