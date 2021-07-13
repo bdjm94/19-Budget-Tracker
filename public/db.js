@@ -73,4 +73,8 @@ const saveRecord = (record) => {
     const transaction = db.transaction(['BudgetStore'], 'readwrite');
 
     const store = transaction.objectStore('BudgetStore');
-}
+
+    store.add(record);
+};
+
+window.addEventListener('online', checkDatabase);
