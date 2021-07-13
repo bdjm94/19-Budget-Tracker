@@ -27,4 +27,6 @@ function checkDatabase() {
     let transaction = db.transaction(['BudgetStore'], 'readwrite');
 
     const store = transaction.objectStore('BudgetStore');
+
+    const getAll = store.getAll();
 }
