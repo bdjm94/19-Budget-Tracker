@@ -46,6 +46,8 @@ function checkDatabase() {
             .then((res) => {
                 if(res.length !== 0) {
                     transaction = db.transaction(['BudgetStore'], 'readwrite');
+
+                    const currentStore = transaction.objectStore('BudgetStore');
                 }
             })
         }
