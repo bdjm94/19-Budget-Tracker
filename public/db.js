@@ -66,3 +66,9 @@ request.onsuccess = function (e) {
         checkDatabase();
     }
 };
+
+const saveRecord = (record) => {
+    console.log('Save record invoked!');
+
+    const transaction = db.transaction(['BudgetStore'], 'readwrite');
+}
