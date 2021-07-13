@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
@@ -13,7 +15,7 @@ const FILES_TO_CACHE = [
 ];
 
 const STATIC_CACHE = "static-cache-v1";
-const RUNTIME_CACHE = "runtime-cache";
+const RUNTIME = "runtime-cache";
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
@@ -25,7 +27,7 @@ self.addEventListener('install', (event) => {
   });
 
 self.addEventListener('activate', (event) => {
-  const currentCaches = [STATIC_CACHE, RUNTIME_CACHE];
+  const currentCaches = [STATIC_CACHE, RUNTIME];
   event.waitUntil(
     caches
       .keys()
@@ -41,4 +43,43 @@ self.addEventListener('activate', (event) => {
       })
       .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('fetch', evt => {
+    if(
+        evt.request.method !== 'GET' ||
+        !evt.request.url.startsWith(self.location.origin)
+    ) {
+        evt.respondWtih(fetch(evt.request));
+        return;
+    }
+
+    if(evt.request.url.includes('/api/transaction')) {
+        evt.respondWtih(
+            caches.open(RUNTIME).then(cache => {
+                return fetch(evt.request)
+                .then(response => {
+                    cache.put(evt.request, response.clone());
+                    return response;
+                })
+                .catch(() => caches.match(evt.request));
+            })
+        );
+        return;
+    }
+
+    evt.respondWtih(
+        caches.match(evt.request).then(cachedResponse => {
+            if(cachedResponse) {
+                return cachedResponse;
+            }
+            return caches.open(RUNTIME).then(cache => {
+                return fetch(evt.request).then(response => {
+                    return cache.put(evt.request, response.clone()).then(() => {
+                        return response;
+                    });
+                });
+            });
+        })
+    );
 });
