@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 let db;
 let budgetVersion;
 
@@ -39,6 +41,12 @@ function checkDatabase() {
                     Accept: 'application/json, text/plain, */*',
                     'Content-Type': 'application/json',
                 },
+            })
+            .then((response) => response.json())
+            .then((res) => {
+                if(res.length !== 0) {
+                    transaction = db.transaction(['BudgetStore'], 'readwrite');
+                }
             })
         }
     }
