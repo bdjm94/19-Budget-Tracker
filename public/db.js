@@ -25,4 +25,6 @@ function checkDatabase() {
     console.log('Check DB invoked');
 
     let transaction = db.transaction(['BudgetStore'], 'readwrite');
+
+    const store = transaction.objectStore('BudgetStore');
 }
